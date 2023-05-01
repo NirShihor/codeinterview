@@ -1,0 +1,12 @@
+{
+	"questions": [
+		{
+			"id": 1,
+			"text": "How would you verify a prime number?"
+		},
+		{
+			"id": 2,
+			"text": "How could you find all prime factors of a number?"
+		}
+	]
+}
