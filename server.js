@@ -1,7 +1,7 @@
 const express = require('express');
+const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const { Configuration, OpenAIApi } = require('openai');
 const path = require('path');
 const app = express();
@@ -28,6 +28,11 @@ const configuration = new Configuration({
 	apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+
+app.post('/question', async (req, res) => {
+	const question = req.body.question;
+	console.log('QUESTION: ', question);
+});
 
 app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
