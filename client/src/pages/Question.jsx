@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './question.css';
 import questionsData from '../data/questions.json';
 import axios from 'axios';
 
@@ -9,39 +10,67 @@ if (process.env.NODE_ENV !== 'production') {
 	apiURL = '';
 }
 
-console.log('apiURL', process.env.REACT_APP_API_URL);
-
 const Question = () => {
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+	const [answer, setAnswer] = useState(''); //what the user types in
+	const [answerResponse, setAnswerResponse] = useState(''); // what the bot says after the user types in (the short message)
 
 	const handleNextQuestion = async () => {
 		if (currentQuestionIndex < questionsData.questions.length - 1) {
 			setCurrentQuestionIndex(currentQuestionIndex + 1);
 		} else {
-			//! Not sure if we want to reset back to the first question if at the end of the array as below
 			setCurrentQuestionIndex(0);
-			//   TODO - petntially - add action when arriving at the end of the quesitons
 		}
+		setAnswer('');
+		setAnswerResponse('');
+	};
 
-		// get the question
-		const question = questionsData.questions[currentQuestionIndex].text;
-		console.log(question);
-		// send the question to chatGPT API
+	const handleSubmitAnswer = async (e) => {
+		e.preventDefault();
 		try {
-			await axios.post(`${apiURL}/question`, {
-				question,
+			const response = await axios.post(`${apiURL}/question`, {
+				answer,
+				questionIndex: currentQuestionIndex,
 			});
+			if (response.data.isCorrect) {
+				setAnswerResponse('Well done! That is the correct answer.');
+			} else {
+				setAnswerResponse(
+					`Sorry, that is not the correct answer. The correct answer is "${response.data.correctAnswer}".`
+				);
+			}
 		} catch (err) {
 			console.error(err);
 		}
+		setAnswer('');
 	};
 
 	const currentQuestion = questionsData.questions[currentQuestionIndex];
+
 	return (
-		<div>
-			<div>Question</div>
-			<h2>{currentQuestion.text}</h2>
-			<button onClick={handleNextQuestion}>Next question</button>
+		<div className='container'>
+			<div className='questionWrapper'>
+				<h3 className='questionHeading'> Question: </h3>
+				<h3 className='question'>{currentQuestion.text}</h3>
+			</div>
+			<form onSubmit={handleSubmitAnswer}>
+				<textarea
+					className='answerInput'
+					type='text'
+					id='answer'
+					value={answer}
+					placeholder='Answer:'
+					onChange={(e) => setAnswer(e.target.value)}
+				/>
+				<br />
+				<button className='answerSubmit' type='submit'>
+					Submit
+				</button>
+			</form>
+			{answerResponse && <div>{answerResponse}</div>}
+			<button className='nextQuestionBtn' onClick={handleNextQuestion}>
+				Next question
+			</button>
 		</div>
 	);
 };

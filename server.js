@@ -7,6 +7,9 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3002;
 
+const questionsData = require('./client/src/data/questions.json');
+console.log('QUESTIONS: ', questionsData);
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -30,8 +33,51 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 app.post('/question', async (req, res) => {
-	const question = req.body.question;
-	console.log('QUESTION: ', question);
+	const questionIndex = req.body.questionIndex;
+	const question = questionsData.questions[questionIndex].text;
+	console.log('QUESTION', question);
+
+	const answer = req.body.answer;
+	console.log('ANSWER', answer);
+
+	const conversations = {
+		question: question,
+		answer: answer,
+		history: [
+			{
+				role: 'user',
+				content: `the question is ${question}. Is ${answer} the correct answer to the ${question}?`,
+			},
+			{
+				role: 'system',
+				content:
+					'You are a helpful assistant that checks the answers of the user.',
+			},
+		],
+	};
+
+	try {
+		const gptResponse = await openai.createChatCompletion({
+			model: 'gpt-3.5-turbo',
+			messages: conversations.history,
+		});
+
+		console.log('GPT RESPONSE', gptResponse.data);
+		console.log('GPT RESPONSE2', gptResponse.data.choices[0].message);
+
+		// aiAnswer = gptResponse.data.choices[0].message.content;
+		// console.log('AI ANSWER', aiAnswer);
+
+		// console.log('GPT RESPONSE', gptResponse);
+
+		// const correctAnswer = gptResponse.data.answers[0];
+		// console.log('CORRECT ANSWER', correctAnswer);
+
+		// res.json({ isCorrect: answer === correctAnswer.trim() });
+	} catch (error) {
+		console.error('Error searching:', error);
+		res.status(500).json({ error: 'Error processing the search' });
+	}
 });
 
 app.get('*', (req, res) => {
