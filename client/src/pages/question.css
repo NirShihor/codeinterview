@@ -23,7 +23,7 @@
 }
 
 .questionCell {
-	width: 40rem;
+	width: auto;
 }
 
 .questionWrapper {
@@ -35,6 +35,10 @@
 	display: inline-block;
 	margin-right: 10px;
 	font-weight: 400;
+}
+
+.form {
+	z-index: 0;
 }
 
 .question {
@@ -56,6 +60,7 @@
 	border-radius: 5px;
 	background-color: #9ce4e5;
 	border: 4px solid #054490;
+	z-index: 0;
 }
 
 .answerInput::placeholder {
@@ -126,11 +131,50 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 18rem;
+	height: auto;
 	border-radius: 50%;
 	padding: 5rem;
 	text-align: left;
 	margin-top: -17rem;
-	font-family: 'Comic Neue', cursive;
-	font-size: 1rem;
+	font-family: 'Klee One', cursive;
+	font-size: 0.85rem;
+	font-weight: 600;
+	line-height: 15px;
+}
+
+.inputWrapper {
+	position: relative;
+}
+
+/* 'Thinking' spinner */
+.loading {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.thinking {
+	margin-left: 1rem;
+	font-family: 'Klee One', cursive;
+}
+
+.spinner {
+	border: 4px solid rgba(0, 0, 0, 0.1);
+	border-left-color: #0e7b26;
+	animation: spin 1s linear infinite;
+	border-radius: 50%;
+	width: 5rem;
+	height: 5rem;
+	z-index: 1;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
 }
