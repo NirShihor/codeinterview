@@ -5,6 +5,23 @@
 	font-family: verdana;
 }
 
+.gridContainer {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 10px;
+}
+
+.cell {
+	border: 2px solid #d7ab0c;
+	align-items: center;
+	text-align: center;
+	margin: 0 auto;
+}
+
+.questionCell {
+	width: 40rem;
+}
+
 .questionWrapper {
 	display: inline-block;
 	vertical-align: middle;
@@ -26,7 +43,7 @@
 }
 
 .answerInput {
-	width: 30rem;
+	width: 75%;
 	height: 20rem;
 	padding: 1rem;
 	text-align: left;
@@ -67,6 +84,39 @@
 
 .gptAnswer {
 	border: 4px solid #054490;
-	min-height: 5rem;
-	min-width: 5rem;
+	display: flex;
+	overflow: hidden;
+	justify-content: center;
+	align-items: center;
+	width: 30rem;
+	height: 30rem;
+	border-radius: 50%;
+	position: relative;
+	left: -100%;
+	transition: left 0.5s ease-in-out;
+	animation: slide-in 1.5s forwards;
+}
+
+.gptAnswer.show {
+	left: 0;
+	animation: none; /* remove slide-in animation when already shown */
+}
+
+.gptAnswer.slideIn {
+	left: 0;
+}
+
+@keyframes slide-in {
+	0% {
+		left: -100%;
+	}
+	100% {
+		left: 0;
+	}
+}
+
+.gptAnswer p {
+	border: 4px solid #0e7b26;
+	padding: 4rem;
+	text-align: left;
 }

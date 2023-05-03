@@ -54,33 +54,41 @@ const Question = () => {
 
 	return (
 		<div className='container'>
-			<div className='questionWrapper'>
-				<h3 className='questionHeading'> Question: </h3>
-				<h3 className='question'>{currentQuestion.text}</h3>
-			</div>
-			<form onSubmit={handleSubmitAnswer}>
-				<textarea
-					className='answerInput'
-					type='text'
-					id='answer'
-					value={answer}
-					placeholder='Answer here...'
-					onChange={(e) => setAnswer(e.target.value)}
-				/>
-				<br />
-				<button className='answerSubmit' type='submit'>
-					Submit
-				</button>
-			</form>
-			{/* {answerResponse && <div className='gptAnswer'>{answerResponse}</div>} */}
-			{chatGptAnswer && (
-				<div className='gptAnswer'>
-					<p>{chatGptAnswer}</p>{' '}
+			<div className='gridContainer'>
+				<div className='cell'>
+					{chatGptAnswer && (
+						<div className={`gptAnswer ${chatGptAnswer ? 'slideIn' : ''}`}>
+							<p>{chatGptAnswer}</p>
+						</div>
+					)}
 				</div>
-			)}
-			<button className='nextQuestionBtn' onClick={handleNextQuestion}>
-				Next question
-			</button>
+				<div className='cell questionCell'>
+					<div className='questionWrapper'>
+						<h3 className='questionHeading'> Question: </h3>
+						<h3 className='question'>{currentQuestion.text}</h3>
+					</div>
+					<form onSubmit={handleSubmitAnswer}>
+						<textarea
+							className='answerInput'
+							type='text'
+							id='answer'
+							value={answer}
+							placeholder='Answer here...'
+							onChange={(e) => setAnswer(e.target.value)}
+						/>
+						<br />
+						<button className='answerSubmit' type='submit'>
+							Submit
+						</button>
+					</form>
+					<button className='nextQuestionBtn' onClick={handleNextQuestion}>
+						Next question
+					</button>
+				</div>
+				<div className='cell'>
+					<h1>THIRD CELL</h1>
+				</div>
+			</div>
 		</div>
 	);
 };
