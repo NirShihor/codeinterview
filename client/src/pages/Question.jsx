@@ -14,6 +14,7 @@ const Question = () => {
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 	const [answer, setAnswer] = useState(''); //what the user types in
 	const [answerResponse, setAnswerResponse] = useState(''); // what the bot says after the user types in (the short message)
+	const [chatGptAnswer, setChatGptAnswer] = useState(''); // what the bot says after the user types in (the long message)
 
 	const handleNextQuestion = async () => {
 		if (currentQuestionIndex < questionsData.questions.length - 1) {
@@ -23,6 +24,7 @@ const Question = () => {
 		}
 		setAnswer('');
 		setAnswerResponse('');
+		setChatGptAnswer('');
 	};
 
 	const handleSubmitAnswer = async (e) => {
@@ -32,6 +34,7 @@ const Question = () => {
 				answer,
 				questionIndex: currentQuestionIndex,
 			});
+			// TODO suspect that this if statement isn't actually doing anything - check later
 			if (response.data.isCorrect) {
 				setAnswerResponse('Well done! That is the correct answer.');
 			} else {
@@ -39,6 +42,8 @@ const Question = () => {
 					`Sorry, that is not the correct answer. The correct answer is "${response.data.correctAnswer}".`
 				);
 			}
+			setChatGptAnswer(response.data.aiAnswer);
+			console.log('CHAT GPT ANSWER', chatGptAnswer);
 		} catch (err) {
 			console.error(err);
 		}
@@ -59,7 +64,7 @@ const Question = () => {
 					type='text'
 					id='answer'
 					value={answer}
-					placeholder='Answer:'
+					placeholder='Answer here...'
 					onChange={(e) => setAnswer(e.target.value)}
 				/>
 				<br />
@@ -67,7 +72,12 @@ const Question = () => {
 					Submit
 				</button>
 			</form>
-			{answerResponse && <div>{answerResponse}</div>}
+			{/* {answerResponse && <div className='gptAnswer'>{answerResponse}</div>} */}
+			{chatGptAnswer && (
+				<div className='gptAnswer'>
+					<p>{chatGptAnswer}</p>{' '}
+				</div>
+			)}
 			<button className='nextQuestionBtn' onClick={handleNextQuestion}>
 				Next question
 			</button>

@@ -49,9 +49,28 @@ app.post('/question', async (req, res) => {
 				content: `the question is ${question}. Is ${answer} the correct answer to the ${question}?`,
 			},
 			{
+				role: 'user',
+				content: `the question is: How would you verify a prime number?`,
+			},
+			{
+				role: 'assistant',
+				content: `1. Divide the number by the smallest prime number possible (2 is usually the smallest prime number). 2. If the remainder is 0, then the number has 2 as a factor. Divide the resulting quotient by 2 and repeat the process until the remainder is not 0 anymore. 3. If the remainder is not 0, move on to the next prime number and repeat the process until all prime factors are found. Keep dividing the quotient with the next prime number until the remainder is not 0 anymore. 4. Continue until the quotient becomes 1 and all prime factors have been identified.`,
+			},
+			{
+				role: 'user',
+				content: `the question is: How would you verify a prime number?`,
+			},
+			{
+				role: 'user',
+				content: `Looking at the moon`,
+			},
+			{
+				role: 'assistant',
+				content: `No. I'm afraid that looking at the moon is not the correct answer`,
+			},
+			{
 				role: 'system',
-				content:
-					'You are a helpful assistant that checks the answers of the user.',
+				content: `You are a helpful assistant that checks the answers of the user. When providing an answer to a user's wrong answer, do not repeat the question, and if there are multiple solutions, provide only one of them. Do not include this in your answer: 'Yes, here is one method to find'. Do not include this in your answer: 'The correct answer is:'. Only provide the answer, without adding any text in front of it. If the user's answer is correct, do not provide any answer, and only return: 'Well done! That is the correct answer.' Do not return 'The correct answer is:' as part of your response if the user provided to correct answer.`,
 			},
 		],
 	};
@@ -64,6 +83,14 @@ app.post('/question', async (req, res) => {
 
 		console.log('GPT RESPONSE', gptResponse.data);
 		console.log('GPT RESPONSE2', gptResponse.data.choices[0].message);
+
+		const chatGptAnswer = gptResponse.data.choices[0].message.content;
+		console.log('CHAT GPT ANSWER', chatGptAnswer);
+
+		res.json({
+			isCorrect: answer === chatGptAnswer.trim(),
+			aiAnswer: chatGptAnswer,
+		});
 
 		// aiAnswer = gptResponse.data.choices[0].message.content;
 		// console.log('AI ANSWER', aiAnswer);
