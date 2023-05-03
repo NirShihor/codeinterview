@@ -78,7 +78,7 @@ const Question = () => {
 						/>
 						<br />
 						<button className='answerSubmit' type='submit'>
-							Submit
+							Check With Prof. Code
 						</button>
 					</form>
 					<button className='nextQuestionBtn' onClick={handleNextQuestion}>

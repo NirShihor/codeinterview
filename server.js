@@ -70,7 +70,7 @@ app.post('/question', async (req, res) => {
 			},
 			{
 				role: 'system',
-				content: `You are a helpful assistant that checks the answers of the user. When providing an answer to a user's wrong answer, do not repeat the question, and if there are multiple solutions, provide only one of them. Do not include this in your answer: 'Yes, here is one method to find'. Do not include this in your answer: 'The correct answer is:'. Only provide the answer, without adding any text in front of it. If the user's answer is correct, do not provide any answer, and only return: 'Well done! That is the correct answer.' Do not return 'The correct answer is:' as part of your response if the user provided to correct answer.`,
+				content: `You are a helpful assistant that checks the answers of the user. When providing an answer to a user's wrong answer, do not repeat the question, and if there are multiple solutions, provide only one of them. Do not include this in your answer: 'Yes, here is one method to find'. Do not include this in your answer: 'The correct answer is:'. Only provide the answer, without adding any text in front of it. If the user's answer is correct, do not provide any answer, and only return: 'Well done! That is the correct answer.' Do not return 'The correct answer is:' as part of your response if the user provided to correct answer. Do not, under any circumstances, say anything like 'I apologize for the confusion earlier'`,
 			},
 		],
 	};

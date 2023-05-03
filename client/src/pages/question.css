@@ -1,5 +1,6 @@
 .container {
-	border: 2px solid red;
+	/* border: 2px solid red; */
+	height: 90vh;
 	text-align: center;
 	margin-top: 4rem;
 	font-family: verdana;
@@ -8,11 +9,14 @@
 .gridContainer {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	grid-gap: 10px;
+	/* grid-gap: 10px; */
+	height: 90%;
 }
 
 .cell {
-	border: 2px solid #d7ab0c;
+	/* border: 2px solid #d7ab0c; */
+	height: 100%;
+	width: 100%;
 	align-items: center;
 	text-align: center;
 	margin: 0 auto;
@@ -83,14 +87,16 @@
 }
 
 .gptAnswer {
-	border: 4px solid #054490;
+	/* border: 4px solid #054490; */
 	display: flex;
 	overflow: hidden;
+	background-image: url('../assets/professorWithBubble.png');
+	background-size: cover;
 	justify-content: center;
 	align-items: center;
-	width: 30rem;
-	height: 30rem;
-	border-radius: 50%;
+	width: 100%;
+	height: 100%;
+	/* border-radius: 50%; */
 	position: relative;
 	left: -100%;
 	transition: left 0.5s ease-in-out;
@@ -116,7 +122,15 @@
 }
 
 .gptAnswer p {
-	border: 4px solid #0e7b26;
-	padding: 4rem;
+	/* border: 4px solid #0e7b26; */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 18rem;
+	border-radius: 50%;
+	padding: 5rem;
 	text-align: left;
+	margin-top: -17rem;
+	font-family: 'Comic Neue', cursive;
+	font-size: 1rem;
 }
