@@ -32,9 +32,12 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+const questionText = [];
+
 app.post('/question', async (req, res) => {
 	const questionIndex = req.body.questionIndex;
-	const question = questionsData.questions[questionIndex].text;
+	questionText.push(questionsData.questions[questionIndex].text);
+	const question = questionText[0];
 	console.log('QUESTION', question);
 
 	const answer = req.body.answer;
@@ -87,26 +90,58 @@ app.post('/question', async (req, res) => {
 			messages: conversations.history,
 		});
 
-		console.log('GPT RESPONSE', gptResponse.data);
-		console.log('GPT RESPONSE2', gptResponse.data.choices[0].message);
-
 		const chatGptAnswer = gptResponse.data.choices[0].message.content;
-		console.log('CHAT GPT ANSWER', chatGptAnswer);
 
 		res.json({
 			isCorrect: answer === chatGptAnswer.trim(),
 			aiAnswer: chatGptAnswer,
 		});
+	} catch (error) {
+		console.error('Error searching:', error);
+		res.status(500).json({ error: 'Error processing the search' });
+	}
+});
 
-		// aiAnswer = gptResponse.data.choices[0].message.content;
-		// console.log('AI ANSWER', aiAnswer);
+app.post('/code', async (req, res) => {
+	const question = questionText;
+	console.log('QUESTION: ', question);
+	const code = await req.body.code;
+	const answer = code;
 
-		// console.log('GPT RESPONSE', gptResponse);
+	const conversations = {
+		question: question,
+		history: [
+			{
+				role: 'user',
+				content: code,
+			},
+			{
+				role: 'assistant',
+				content: `Well done! That is the correct answer. Your code is correct!`,
+			},
+			{
+				role: 'system',
+				content: `You are a helpful assistant called Professor Code. 
+				Your task is to help software developers to prepare for interviews.
+				If ${answer} is not the correct way to answer ${question}, then you should provide the code in code format that is the correct way to answer ${question}.
+				The question is ${question} and your primary goal is to check if the ${answer} is the correct answer to the ${question} and provide the user with the relevant feedback.`,
+			},
+		],
+	};
 
-		// const correctAnswer = gptResponse.data.answers[0];
-		// console.log('CORRECT ANSWER', correctAnswer);
+	try {
+		const gptResponse = await openai.createChatCompletion({
+			model: 'gpt-3.5-turbo',
+			messages: conversations.history,
+		});
 
-		// res.json({ isCorrect: answer === correctAnswer.trim() });
+		const chatGptAnswer = gptResponse.data.choices[0].message.content;
+		console.log('GPT ANSWER', chatGptAnswer);
+
+		res.json({
+			isCorrect: answer === chatGptAnswer.trim(),
+			aiAnswer: chatGptAnswer,
+		});
 	} catch (error) {
 		console.error('Error searching:', error);
 		res.status(500).json({ error: 'Error processing the search' });

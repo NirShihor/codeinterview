@@ -7,6 +7,10 @@
 		{
 			"id": 2,
 			"text": "How could you find all prime factors of a number?"
+		},
+		{
+			"id": 3,
+			"text": "How do you assign a value to a variable?"
 		}
 	]
 }

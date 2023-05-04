@@ -14,7 +14,8 @@ if (process.env.NODE_ENV !== 'production') {
 const Question = () => {
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 	const [answer, setAnswer] = useState(''); //what the user types in
-	const [answerResponse, setAnswerResponse] = useState(''); // what the bot says after the user types in (the short message)
+	// ! leave comments for now but clean up at some point once all is working
+	// const [answerResponse, setAnswerResponse] = useState(''); // what the bot says after the user types in (the short message)
 	const [chatGptAnswer, setChatGptAnswer] = useState(''); // what the bot says after the user types in (the long message)
 	const [loading, setLoading] = useState(false); // loading spinner
 
@@ -25,7 +26,7 @@ const Question = () => {
 			setCurrentQuestionIndex(0);
 		}
 		setAnswer('');
-		setAnswerResponse('');
+		// setAnswerResponse('');
 		setChatGptAnswer('');
 	};
 
@@ -38,13 +39,13 @@ const Question = () => {
 				questionIndex: currentQuestionIndex,
 			});
 			// TODO suspect that this if statement isn't actually doing anything - check later
-			if (response.data.isCorrect) {
-				setAnswerResponse('Well done! That is the correct answer.');
-			} else {
-				setAnswerResponse(
-					`Sorry, that is not the correct answer. The correct answer is "${response.data.correctAnswer}".`
-				);
-			}
+			// if (response.data.isCorrect) {
+			// 	setAnswerResponse('Well done! That is the correct answer.');
+			// } else {
+			// 	setAnswerResponse(
+			// 		`Sorry, that is not the correct answer. The correct answer is "${response.data.correctAnswer}".`
+			// 	);
+			// }
 			setChatGptAnswer(response.data.aiAnswer);
 			console.log('CHAT GPT ANSWER', chatGptAnswer);
 		} catch (err) {
@@ -96,9 +97,7 @@ const Question = () => {
 						Next question
 					</button>
 				</div>
-				<div className='cell'>
-					<CodeEditor />
-				</div>
+				<div className='cell'>{<CodeEditor />}</div>
 			</div>
 		</div>
 	);

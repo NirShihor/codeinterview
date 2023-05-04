@@ -5,3 +5,15 @@
 	font-weight: 400;
 	text-align: left;
 }
+
+.codeSubmitBtn {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	width: 15rem;
+	height: 3rem;
+	background-color: #1b385c;
+	border-radius: 8px;
+	font-size: 1.2rem;
+	color: #9ce4e5;
+	cursor: pointer;
+}
