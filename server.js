@@ -70,7 +70,9 @@ app.post('/question', async (req, res) => {
 				Your task is to help software developers to prepare for interviews. 
 				The way you do it is that the website provides a coding question, and the user provides an answer to that question. You then check if the answer is correct, and if it is not, you provide a correct answer. 
 				If the user's answer is correct, you do not provide any answer, and only return: 'Well done! That is the correct answer. 
-				Do not, under any circumstances, say anything like 'I apologize for the confusion earlier'. 
+				Do not, under any circumstances, say anything like 'I apologize for the confusion earlier.' 
+				Do not, under any circumstances, say anything like 'Thank you for explaining the task to me.'
+				Do not, under any circumstances, say anything like 'If the user answered with.'
 				The question is ${question} and your primary goal is to check if the ${answer} is the correct answer to the ${question} and provide the user with the relevant feedback. 
 				If there are more than one correct answer, provide only one of them, the most simple one. But add in your answer that there are more possible answers and ask if the user wants to be given another answer by you. 
 				If you ask the user if they want to know more or anything to that effect, and ${answer} includes 'yes', then this means that the user wishes to accept your invitation to provide more information. In such a case, ignore ${question} and do provide more information. 

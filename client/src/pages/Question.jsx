@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './question.css';
 import questionsData from '../data/questions.json';
 import axios from 'axios';
+import CodeEditor from '../components/CodeEditor';
 
 let apiURL;
 if (process.env.NODE_ENV !== 'production') {
@@ -96,7 +97,7 @@ const Question = () => {
 					</button>
 				</div>
 				<div className='cell'>
-					<h1>THIRD CELL</h1>
+					<CodeEditor />
 				</div>
 			</div>
 		</div>
