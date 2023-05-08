@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './question.css';
-import questionsData from '../data/questions.json';
+// import questionsData from '../data/questions.json';
 import axios from 'axios';
+import { default as SyntaxHighlighter } from 'react-syntax-highlighter'; // for code styling
+import draculaTheme from '../draculaTheme';
 import CodeEditor from '../components/CodeEditor';
 
 let apiURL;
@@ -14,20 +16,30 @@ if (process.env.NODE_ENV !== 'production') {
 const Question = () => {
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 	const [answer, setAnswer] = useState(''); //what the user types in
-	// ! leave comments for now but clean up at some point once all is working
-	// const [answerResponse, setAnswerResponse] = useState(''); // what the bot says after the user types in (the short message)
 	const [chatGptAnswer, setChatGptAnswer] = useState(''); // what the bot says after the user types in (the long message)
 	const [loading, setLoading] = useState(false); // loading spinner
+	const [code, setCode] = useState(`function hello() {
+		console.log("Professor Code");
+	  }`);
+	const [codeChatGptAnswer, setCodeChatGptAnswer] = useState('');
+	const [isCodeQuestion, setIsCodeQuestion] = useState(false);
+	const [language, setLanguage] = useState('javascript');
+	const [questions, setQuestions] = useState([]);
+
+	const handleLanguageChange = (e) => {
+		setLanguage(e.target.value);
+	};
 
 	const handleNextQuestion = async () => {
-		if (currentQuestionIndex < questionsData.questions.length - 1) {
+		if (questions.length === 0) {
+			setCurrentQuestionIndex(0);
+		} else if (currentQuestionIndex < questions.length - 1) {
 			setCurrentQuestionIndex(currentQuestionIndex + 1);
 		} else {
 			setCurrentQuestionIndex(0);
 		}
 		setAnswer('');
-		// setAnswerResponse('');
-		setChatGptAnswer('');
+		setIsCodeQuestion(false); // reset isCodeQuestion state variable
 	};
 
 	const handleSubmitAnswer = async (e) => {
@@ -37,17 +49,10 @@ const Question = () => {
 			const response = await axios.post(`${apiURL}/question`, {
 				answer,
 				questionIndex: currentQuestionIndex,
+				language,
 			});
-			// TODO suspect that this if statement isn't actually doing anything - check later
-			// if (response.data.isCorrect) {
-			// 	setAnswerResponse('Well done! That is the correct answer.');
-			// } else {
-			// 	setAnswerResponse(
-			// 		`Sorry, that is not the correct answer. The correct answer is "${response.data.correctAnswer}".`
-			// 	);
-			// }
-			setChatGptAnswer(response.data.aiAnswer);
-			console.log('CHAT GPT ANSWER', chatGptAnswer);
+			setChatGptAnswer(response.data.aiAnswer); // update the state variable here
+			setIsCodeQuestion(false); // set isCodeQuestion to false when a regular question is submitted
 		} catch (err) {
 			console.error(err);
 		}
@@ -55,22 +60,96 @@ const Question = () => {
 		setAnswer('');
 	};
 
-	const currentQuestion = questionsData.questions[currentQuestionIndex];
+	const handleSubmitCodeEditor = async (e) => {
+		e.preventDefault();
+		setLoading(true);
+		try {
+			const response = await axios.post(`${apiURL}/code`, {
+				code,
+				language,
+			});
+			setCodeChatGptAnswer(response.data.aiAnswer || ''); // update the state variable here
+			setIsCodeQuestion(true); // set isCodeQuestion to true when a code question is submitted
+		} catch (error) {
+			console.error(error);
+		}
+		setLoading(false);
+		setCode('');
+	};
+
+	useEffect(() => {
+		if (language === '') {
+			setQuestions([]);
+		} else {
+			const data = require(`../data/${language}Questions.json`);
+			setQuestions(data.questions);
+		}
+	}, [language]);
+
+	const currentQuestion = questions[currentQuestionIndex];
+
+	const styledCodeChatGptAnswer = codeChatGptAnswer.split('```');
 
 	return (
 		<div className='container'>
+			<select
+				className='selectLanguage'
+				value={language}
+				onChange={handleLanguageChange}
+			>
+				<option value=''>Select a language</option>
+				<option value='javascript'>JavaScript</option>
+				<option value='python'>Python</option>
+				<option value='java'>Java</option>
+			</select>
 			<div className='gridContainer'>
 				<div className='cell'>
-					{chatGptAnswer && (
-						<div className={`gptAnswer ${chatGptAnswer ? 'slideIn' : ''}`}>
+					{chatGptAnswer && !isCodeQuestion && (
+						<div
+							className={`gptAnswer chatGptAnswer ${
+								chatGptAnswer ? 'slideIn' : ''
+							}`}
+						>
 							<p>{chatGptAnswer}</p>
+						</div>
+					)}
+					{codeChatGptAnswer && isCodeQuestion && (
+						<div
+							className={`gptAnswer codeGptAnswer ${
+								codeChatGptAnswer ? 'slideIn' : ''
+							}`}
+						>
+							<div className='codeTextBlockWrapper'>
+								{styledCodeChatGptAnswer.map((block, index) => {
+									// If the index is even, render it as a normal text block
+									if (index % 2 === 0) {
+										return <p key={index}>{block}</p>;
+									}
+									// If the index is odd, render it as a code block (use <pre> and <code> elements)
+									else {
+										return (
+											<div className='highlighterWrapper'>
+												<SyntaxHighlighter
+													key={index}
+													language='javascript'
+													style={draculaTheme}
+												>
+													{block}
+												</SyntaxHighlighter>
+											</div>
+										);
+									}
+								})}
+							</div>
 						</div>
 					)}
 				</div>
 				<div className='cell questionCell'>
 					<div className='questionWrapper'>
 						<h3 className='questionHeading'> Question: </h3>
-						<h3 className='question'>{currentQuestion.text}</h3>
+						{currentQuestion && (
+							<h3 className='question'>{currentQuestion.text}</h3>
+						)}
 					</div>
 					<form className='form' onSubmit={handleSubmitAnswer}>
 						<div className='inputWrapper'>
@@ -97,7 +176,15 @@ const Question = () => {
 						Next question
 					</button>
 				</div>
-				<div className='cell'>{<CodeEditor />}</div>
+				<div className='cell'>
+					{
+						<CodeEditor
+							onSubmit={handleSubmitCodeEditor}
+							setChatGptAnswer={setChatGptAnswer}
+							language={language}
+						/>
+					}
+				</div>
 			</div>
 		</div>
 	);

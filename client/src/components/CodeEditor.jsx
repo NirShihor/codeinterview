@@ -24,19 +24,30 @@ if (process.env.NODE_ENV !== 'production') {
 	apiURL = '';
 }
 
-const CodeEditor = () => {
+const CodeEditor = ({
+	language,
+	codeChatGptAnswer,
+	setChatGptAnswer,
+	setCodeChatGptAnswer,
+	onSubmit,
+}) => {
 	const [code, setCode] = useState(`function hello() {
         console.log("Professor Code");
     }`);
 
+	const [loading, setLoading] = useState(false); // loading spinner
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 		try {
-			const response = await axios.post(`${apiURL}/code`, { code });
-			console.log(response.data);
+			const response = await axios.post(`${apiURL}/code`, { code, language });
+			setChatGptAnswer('');
+			setCodeChatGptAnswer(response.data.aiAnswer.trim() || '');
 		} catch (error) {
 			console.error(error);
 		}
+		setLoading(false);
 	};
 
 	return (
@@ -61,6 +72,7 @@ const CodeEditor = () => {
 					showGutter={true}
 					highlightActiveLine={true}
 					value={code}
+					setCodeChatGptAnswer={setCodeChatGptAnswer}
 					setOptions={{
 						enableBasicAutocompletion: true,
 						enableLiveAutocompletion: true,
@@ -69,10 +81,21 @@ const CodeEditor = () => {
 						tabSize: 2,
 					}}
 				/>
-				<button className='codeSubmitBtn' type='submit'>
+				<button className='codeSubmitBtn' type='submit' onClick={onSubmit}>
 					Check with Prof. Code
 				</button>
 			</form>
+			{codeChatGptAnswer && (
+				<div className={`gptAnswer ${codeChatGptAnswer ? 'slideIn' : ''}`}>
+					<p>{codeChatGptAnswer}</p>
+				</div>
+			)}
+
+			{loading && (
+				<div className='loading'>
+					<div className='spinner'></div>
+				</div>
+			)}
 		</div>
 	);
 };
