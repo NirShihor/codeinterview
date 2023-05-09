@@ -25,9 +25,14 @@ const Question = () => {
 	const [isCodeQuestion, setIsCodeQuestion] = useState(false);
 	const [language, setLanguage] = useState('javascript');
 	const [questions, setQuestions] = useState([]);
+	const [level, setLevel] = useState('');
 
 	const handleLanguageChange = (e) => {
 		setLanguage(e.target.value);
+	};
+
+	const handleLevelChange = (e) => {
+		setLevel(e.target.value);
 	};
 
 	const handleNextQuestion = async () => {
@@ -50,6 +55,7 @@ const Question = () => {
 				answer,
 				questionIndex: currentQuestionIndex,
 				language,
+				level,
 			});
 			setChatGptAnswer(response.data.aiAnswer); // update the state variable here
 			setIsCodeQuestion(false); // set isCodeQuestion to false when a regular question is submitted
@@ -67,6 +73,7 @@ const Question = () => {
 			const response = await axios.post(`${apiURL}/code`, {
 				code,
 				language,
+				level,
 			});
 			setCodeChatGptAnswer(response.data.aiAnswer || ''); // update the state variable here
 			setIsCodeQuestion(true); // set isCodeQuestion to true when a code question is submitted
@@ -78,13 +85,13 @@ const Question = () => {
 	};
 
 	useEffect(() => {
-		if (language === '') {
+		if (language === '' || level === '') {
 			setQuestions([]);
 		} else {
-			const data = require(`../data/${language}Questions.json`);
+			const data = require(`../data/${language}${level}Questions.json`);
 			setQuestions(data.questions);
 		}
-	}, [language]);
+	}, [language, level]);
 
 	const currentQuestion = questions[currentQuestionIndex];
 
@@ -101,6 +108,16 @@ const Question = () => {
 				<option value='javascript'>JavaScript</option>
 				<option value='python'>Python</option>
 				<option value='java'>Java</option>
+			</select>
+			<select
+				className='selectLevel'
+				value={level}
+				onChange={handleLevelChange}
+			>
+				<option value=''>Select a level</option>
+				<option value='beginner'>Beginner</option>
+				<option value='intermediate'>Intermediate</option>
+				<option value='advanced'>Advanced</option>
 			</select>
 			<div className='gridContainer'>
 				<div className='cell'>

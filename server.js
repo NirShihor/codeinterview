@@ -7,9 +7,6 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3002;
 
-const questionsData = require('./client/src/data/questions.json');
-console.log('QUESTIONS: ', questionsData);
-
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -34,10 +31,20 @@ const openai = new OpenAIApi(configuration);
 
 let questionText = '';
 
+// TODO - we are at adding level.
 app.post('/question', async (req, res) => {
 	const questionIndex = req.body.questionIndex;
-	const question = questionsData.questions[questionIndex].text;
 	const language = req.body.language;
+	const level = req.body.level;
+
+	console.log('LEVEL ', level);
+
+	const questionsFilePath = `./client/src/data/${language}${level}Questions.json`;
+	const path = questionsFilePath;
+	const questionsData = require(path);
+
+	const question = questionsData.questions[questionIndex].text;
+
 	console.log('QUESTION', question);
 	questionText = await question;
 	console.log('QUESTION TEXT: ', questionText);
@@ -110,6 +117,7 @@ app.post('/code', async (req, res) => {
 	console.log('QUESTION2: ', question);
 	const code = await req.body.code;
 	const language = req.body.language;
+	const level = req.body.level;
 	const answer = code;
 	console.log('*ANSWER*', answer);
 

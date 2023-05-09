@@ -19,6 +19,11 @@
 	padding: 0.5rem;
 }
 
+.selectLevel {
+	font-size: 1rem;
+	padding: 0.5rem;
+}
+
 .cell {
 	/* border: 2px solid #d7ab0c; */
 	height: 100%;
