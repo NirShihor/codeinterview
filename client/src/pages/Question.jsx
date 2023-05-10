@@ -85,15 +85,28 @@ const Question = () => {
 	};
 
 	useEffect(() => {
-		if (language === '' || level === '') {
-			setQuestions([]);
-		} else {
-			const data = require(`../data/${language}${level}Questions.json`);
-			setQuestions(data.questions);
+		async function fetchQuestions() {
+			if (language === '' || level === '') {
+				setQuestions([]);
+			} else {
+				try {
+					const response = await fetch(
+						`${apiURL}/questions?language=${language}&level=${level}`
+					);
+					const data = await response.json();
+					console.log('DATA', data);
+					setQuestions(data.questions);
+				} catch (error) {
+					console.error('Error fetching questions:', error);
+				}
+			}
 		}
+
+		fetchQuestions();
 	}, [language, level]);
 
 	const currentQuestion = questions[currentQuestionIndex];
+	console.log('CURRENT QUESTION', currentQuestion);
 
 	const styledCodeChatGptAnswer = codeChatGptAnswer.split('```');
 
