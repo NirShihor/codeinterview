@@ -26,6 +26,7 @@ const Question = () => {
 	const [language, setLanguage] = useState('javascript');
 	const [questions, setQuestions] = useState([]);
 	const [level, setLevel] = useState('');
+	const [alert, setAlert] = useState(null);
 
 	const handleLanguageChange = (e) => {
 		setLanguage(e.target.value);
@@ -33,6 +34,9 @@ const Question = () => {
 
 	const handleLevelChange = (e) => {
 		setLevel(e.target.value);
+		if (e.target.value !== '') {
+			setAlert(null);
+		}
 	};
 
 	const handleNextQuestion = async () => {
@@ -49,6 +53,10 @@ const Question = () => {
 
 	const handleSubmitAnswer = async (e) => {
 		e.preventDefault();
+		if (!language || !level) {
+			setAlert('Please select a language and level');
+			return;
+		}
 		setLoading(true); // set loading to true before the API call
 		try {
 			const response = await axios.post(`${apiURL}/question`, {
@@ -68,6 +76,11 @@ const Question = () => {
 
 	const handleSubmitCodeEditor = async (e) => {
 		e.preventDefault();
+		if (!language || !level) {
+			setAlert('Please select a language and level');
+			return;
+		}
+
 		setLoading(true);
 		try {
 			const response = await axios.post(`${apiURL}/code`, {
@@ -85,15 +98,28 @@ const Question = () => {
 	};
 
 	useEffect(() => {
-		if (language === '' || level === '') {
-			setQuestions([]);
-		} else {
-			const data = require(`../data/${language}${level}Questions.json`);
-			setQuestions(data.questions);
+		async function fetchQuestions() {
+			if (language === '' || level === '') {
+				setQuestions([]);
+			} else {
+				try {
+					const response = await fetch(
+						`${apiURL}/questions?language=${language}&level=${level}`
+					);
+					const data = await response.json();
+					console.log('DATA', data);
+					setQuestions(data.questions);
+				} catch (error) {
+					console.error('Error fetching questions:', error);
+				}
+			}
 		}
+
+		fetchQuestions();
 	}, [language, level]);
 
 	const currentQuestion = questions[currentQuestionIndex];
+	console.log('CURRENT QUESTION', currentQuestion);
 
 	const styledCodeChatGptAnswer = codeChatGptAnswer.split('```');
 
@@ -119,6 +145,7 @@ const Question = () => {
 				<option value='intermediate'>Intermediate</option>
 				<option value='advanced'>Advanced</option>
 			</select>
+			{alert && <div className='alert'>{alert}</div>}
 			<div className='gridContainer'>
 				<div className='cell'>
 					{chatGptAnswer && !isCodeQuestion && (
