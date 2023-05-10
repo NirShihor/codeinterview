@@ -119,7 +119,6 @@ const Question = () => {
 	}, [language, level]);
 
 	const currentQuestion = questions[currentQuestionIndex];
-	console.log('CURRENT QUESTION', currentQuestion);
 
 	const styledCodeChatGptAnswer = codeChatGptAnswer.split('```');
 
