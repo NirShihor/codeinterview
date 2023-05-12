@@ -27,6 +27,7 @@ const Question = () => {
 	const [questions, setQuestions] = useState([]);
 	const [level, setLevel] = useState('');
 	const [alert, setAlert] = useState(null);
+	const [isSubscribed, setIsSubscribed] = useState(false); // for the useEffect cleanup function
 
 	const handleLanguageChange = (e) => {
 		setLanguage(e.target.value);
@@ -39,12 +40,27 @@ const Question = () => {
 		}
 	};
 
+	const promptUserToSubscribe = () => {
+		alert('Please subscribe to continue using the app');
+	};
+
+	// $ now need to have more than 20 questions in database to test the below - add questions!!!
 	const handleNextQuestion = async () => {
 		if (questions.length === 0) {
+			// if there are no questions, don't try access index that doesn't exist
 			setCurrentQuestionIndex(0);
+			// check if not on the last question
 		} else if (currentQuestionIndex < questions.length - 1) {
-			setCurrentQuestionIndex(currentQuestionIndex + 1);
+			// check if the question if not in first 20 and user is not subscribed
+			if (currentQuestionIndex + 1 >= 20 && !isSubscribed) {
+				promptUserToSubscribe();
+				return;
+			} else {
+				// else increment the question index
+				setCurrentQuestionIndex(currentQuestionIndex + 1);
+			}
 		} else {
+			// if on the last question, go back to the first question
 			setCurrentQuestionIndex(0);
 		}
 		setAnswer('');
