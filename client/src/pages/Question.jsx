@@ -45,6 +45,7 @@ const Question = () => {
 	};
 
 	// $ now need to have more than 20 questions in database to test the below - add questions!!!
+	// $ start new feature branch for this
 	const handleNextQuestion = async () => {
 		if (questions.length === 0) {
 			// if there are no questions, don't try access index that doesn't exist
@@ -164,20 +165,12 @@ const Question = () => {
 			<div className='gridContainer'>
 				<div className='cell'>
 					{chatGptAnswer && !isCodeQuestion && (
-						<div
-							className={`gptAnswer chatGptAnswer ${
-								chatGptAnswer ? 'slideIn' : ''
-							}`}
-						>
+						<div className='gptAnswer chatGptAnswer'>
 							<p>{chatGptAnswer}</p>
 						</div>
 					)}
 					{codeChatGptAnswer && isCodeQuestion && (
-						<div
-							className={`gptAnswer codeGptAnswer ${
-								codeChatGptAnswer ? 'slideIn' : ''
-							}`}
-						>
+						<div className='gptAnswer codeGptAnswer'>
 							<div className='codeTextBlockWrapper'>
 								{styledCodeChatGptAnswer.map((block, index) => {
 									// If the index is even, render it as a normal text block

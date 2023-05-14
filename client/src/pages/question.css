@@ -111,7 +111,6 @@
 	/* border: 4px solid #054490; */
 	display: flex;
 	overflow: hidden;
-	background-image: url('../assets/professorBubbleLong2.png');
 	background-size: cover;
 	justify-content: center;
 	align-items: center;
