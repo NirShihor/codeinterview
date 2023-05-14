@@ -52,7 +52,6 @@ const CodeEditor = ({
 
 	return (
 		<div className='codeEditorWrapper'>
-			<h3 className='codeHeading'>Let's Code It:</h3>
 			<form onSubmit={handleSubmit}>
 				<AceEditor
 					style={{
@@ -82,7 +81,7 @@ const CodeEditor = ({
 					}}
 				/>
 				<button className='codeSubmitBtn' type='submit' onClick={onSubmit}>
-					Check with Prof. Code
+					Submit
 				</button>
 			</form>
 			{codeChatGptAnswer && (

@@ -1,12 +1,12 @@
 import './App.css';
-import Question from './pages/Question';
+import Chat from './pages/Chat';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
 	return (
 		<Router>
 			<Routes>
-				<Route exact path='/' element={<Question />} />
+				<Route exact path='/' element={<Chat />} />
 			</Routes>
 		</Router>
 	);
