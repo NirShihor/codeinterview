@@ -76,8 +76,8 @@ app.post('/add-questions', async (req, res) => {
 
 app.post('/question', async (req, res) => {
 	const questionIndex = req.body.questionIndex;
-	const language = req.body.language;
-	const level = req.body.level;
+	const language = req.query.language;
+	const level = req.query.level;
 
 	try {
 		const questionDoc = await Question.findOne({
@@ -156,11 +156,9 @@ app.post('/question', async (req, res) => {
 
 app.post('/code', async (req, res) => {
 	question = await question;
-	console.log('QUESTION2: ', question);
 	const code = await req.body.code;
 	const language = req.body.language;
 	const answer = code;
-	console.log('*ANSWER*', answer);
 
 	const conversations = {
 		question: question,

@@ -24,17 +24,20 @@ const Chat = () => {
 	const [isCodeQuestion, setIsCodeQuestion] = useState(false);
 	const [language, setLanguage] = useState('Select a language');
 	const [questions, setQuestions] = useState([]);
-	const [level, setLevel] = useState('');
+	const [level, setLevel] = useState('Select a level');
 	const [alert, setAlert] = useState(null);
 	const [isSubscribed, setIsSubscribed] = useState(false); // for the useEffect cleanup function
 
 	const handleLanguageChange = (e) => {
 		setLanguage(e.target.value);
+		if (e.target.value !== 'Select a language') {
+			setAlert(null);
+		}
 	};
 
 	const handleLevelChange = (e) => {
 		setLevel(e.target.value);
-		if (e.target.value !== '') {
+		if (e.target.value !== 'Select a level') {
 			setAlert(null);
 		}
 	};
@@ -73,20 +76,17 @@ const Chat = () => {
 		}
 		setLoading(true); // set loading to true before the API call
 		try {
-			const response = await axios.post(`${apiURL}/question`, {
-				answer,
-				questionIndex: currentQuestionIndex,
-				language,
-				level,
-			});
+			const response = await axios.post(
+				`${apiURL}/question?language=${language}&level=${level}`,
+				{
+					answer,
+					questionIndex: currentQuestionIndex,
+				}
+			);
 			setChatHistory((prevHistory) => [
 				...prevHistory,
 				{ message: response.data.aiAnswer, isCode: false },
 			]);
-			// setChatGptAnswer((prevAnswers) => [
-			// 	...prevAnswers,
-			// 	response.data.aiAnswer,
-			// ]); // update the state variable here
 			setIsCodeQuestion(false); // set isCodeQuestion to false when a regular question is submitted
 		} catch (err) {
 			console.error(err);
@@ -109,10 +109,6 @@ const Chat = () => {
 				language,
 				level,
 			});
-			// setCodeChatGptAnswer((prevAnswers) => [
-			// 	...prevAnswers,
-			// 	response.data.aiAnswer || '',
-			// ]); // update the state variable here
 			setChatHistory((prevHistory) => [
 				...prevHistory,
 				{ message: response.data.aiAnswer || '', isCode: true },
@@ -127,7 +123,7 @@ const Chat = () => {
 
 	useEffect(() => {
 		async function fetchQuestions() {
-			if (language === '' || level === '') {
+			if (language === 'Select a language' || level === 'Select a level') {
 				setQuestions([]);
 			} else {
 				try {
@@ -135,7 +131,6 @@ const Chat = () => {
 						`${apiURL}/questions?language=${language}&level=${level}`
 					);
 					const data = await response.json();
-					console.log('DATA', data);
 					setQuestions(data.questions);
 				} catch (error) {
 					console.error('Error fetching questions:', error);
@@ -143,7 +138,9 @@ const Chat = () => {
 			}
 		}
 
-		fetchQuestions();
+		if (language !== 'Select a language' && level !== 'Select a level') {
+			fetchQuestions();
+		}
 	}, [language, level]);
 
 	const currentQuestion = questions[currentQuestionIndex];
