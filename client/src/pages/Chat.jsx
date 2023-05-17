@@ -47,30 +47,34 @@ const Chat = () => {
 	};
 
 	const handleNextQuestion = async () => {
+		let newIndex;
+
 		if (questions.length === 0) {
-			// if there are no questions, don't try access index that doesn't exist
-			setCurrentQuestionIndex(0);
-			// check if not on the last question
+			newIndex = 0;
 		} else if (currentQuestionIndex < questions.length - 1) {
-			// check if the question if not in first 20 and user is not subscribed
 			if (currentQuestionIndex + 1 >= 20 && !isSubscribed) {
 				promptUserToSubscribe();
 				return;
 			} else {
-				// else increment the question index
-				setCurrentQuestionIndex(currentQuestionIndex + 1);
+				newIndex = currentQuestionIndex + 1;
 			}
 		} else {
-			// if on the last question, go back to the first question
-			setCurrentQuestionIndex(0);
+			newIndex = 1;
 		}
+
+		setCurrentQuestionIndex(newIndex);
 		setAnswer('');
-		setIsCodeQuestion(false); // reset isCodeQuestion state variable
+		setIsCodeQuestion(false);
 	};
 
 	const handleSubmitAnswer = async (e) => {
 		e.preventDefault();
-		if (!language || !level) {
+		if (
+			!language ||
+			language === 'Select a language' ||
+			!level ||
+			level === 'Select a level'
+		) {
 			setAlert('Please select a language and level');
 			return;
 		}

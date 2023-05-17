@@ -78,6 +78,9 @@ app.post('/question', async (req, res) => {
 	const questionIndex = req.body.questionIndex;
 	const language = req.query.language;
 	const level = req.query.level;
+	console.log('QUESTION INDEX:', questionIndex);
+	console.log('LANGUAGE:', language);
+	console.log('LEVEL:', level);
 
 	try {
 		const questionDoc = await Question.findOne({
@@ -85,6 +88,8 @@ app.post('/question', async (req, res) => {
 			level: level,
 			index: questionIndex,
 		});
+
+		console.log('QUESTION DOC:', questionDoc);
 
 		if (!questionDoc) {
 			res.status(404).json({ error: 'Question not found' });
