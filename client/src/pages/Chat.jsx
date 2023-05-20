@@ -115,11 +115,13 @@ const Chat = () => {
 
 		setLoading(true);
 		try {
-			const response = await axios.post(`${apiURL}/code`, {
-				code,
-				language,
-				level,
-			});
+			const response = await axios.post(
+				`${apiURL}/code?language=${language}&level=${level}`,
+				{
+					code,
+					questionIndex: currentQuestionIndex,
+				}
+			);
 			setChatHistory((prevHistory) => [
 				...prevHistory,
 				{ message: response.data.aiAnswer || '', isCode: true },
