@@ -18,11 +18,6 @@ router.post('/', async (req, res) => {
 	const language = req.query.language;
 	const level = req.query.level;
 
-	console.log('CODE QUESTION INDEX:', questionIndex);
-	console.log('CODE LANGUAGE:', language);
-	console.log('CODE LEVEL:', level);
-	console.log('CODE:', code);
-
 	try {
 		const questionDoc = await Question.findOne({
 			language: language,
@@ -36,8 +31,6 @@ router.post('/', async (req, res) => {
 		}
 
 		const latestQuestion = questionDoc.text;
-
-		console.log('QUESTION FROM CODE:', latestQuestion);
 
 		const conversations = {
 			question: latestQuestion,
