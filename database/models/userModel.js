@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
 			validator: function (value) {
 				// Password validation regular expression
 				const passwordRegex =
-					/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()])[a-zA-Z0-9!@#$%^&*()]{8,}$/;
+					/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()]).{8,}$/;
 				return passwordRegex.test(value);
 			},
 			message:

@@ -22,6 +22,8 @@ const Register = () => {
 				email,
 				password,
 			});
+			console.log('HERE');
+			console.log('PASSWORD: ', password);
 			setAlert(response.data.message);
 			setEmail('');
 			setPassword('');
