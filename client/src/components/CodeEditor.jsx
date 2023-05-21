@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import AceEditor from "react-ace";
-import "./codeEditor.css";
+import "./codeEditor.min.css";
 
 // require the ace-builds module
 import "ace-builds/src-noconflict/ext-language_tools";
