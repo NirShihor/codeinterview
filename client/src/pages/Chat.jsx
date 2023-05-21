@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './chat.css';
 // import questionsData from '../data/questions.json';
 import axios from 'axios';
 import { default as SyntaxHighlighter } from 'react-syntax-highlighter'; // for code styling
-import draculaTheme from '../draculaTheme';
 import CodeEditor from '../components/CodeEditor';
+import draculaTheme from '../draculaTheme';
 
 let apiURL;
 if (process.env.NODE_ENV !== 'production') {
@@ -26,7 +27,9 @@ const Chat = () => {
 	const [questions, setQuestions] = useState([]);
 	const [level, setLevel] = useState('Select a level');
 	const [alert, setAlert] = useState(null);
+	const [registerAlert, setRegisterAlert] = useState(null);
 	const [isSubscribed, setIsSubscribed] = useState(false); // for the useEffect cleanup function
+	const [isLoggedIn, setLoggedIn] = useState(false); // for the useEffect cleanup function
 
 	const handleLanguageChange = (e) => {
 		setLanguage(e.target.value);
@@ -42,8 +45,12 @@ const Chat = () => {
 		}
 	};
 
-	const promptUserToSubscribe = () => {
-		alert('Please subscribe to continue using the app');
+	const promptUserToSubscribeOrLogin = () => {
+		if (isLoggedIn === false) {
+			setRegisterAlert(
+				'Please subscribe or login to the access more questions'
+			);
+		}
 	};
 
 	const handleNextQuestion = async () => {
@@ -52,8 +59,8 @@ const Chat = () => {
 		if (questions.length === 0) {
 			newIndex = 0;
 		} else if (currentQuestionIndex < questions.length - 1) {
-			if (currentQuestionIndex + 1 >= 20 && !isSubscribed) {
-				promptUserToSubscribe();
+			if (currentQuestionIndex + 1 >= 20 && !isLoggedIn) {
+				promptUserToSubscribeOrLogin();
 				return;
 			} else {
 				newIndex = currentQuestionIndex + 1;
@@ -108,11 +115,13 @@ const Chat = () => {
 
 		setLoading(true);
 		try {
-			const response = await axios.post(`${apiURL}/code`, {
-				code,
-				language,
-				level,
-			});
+			const response = await axios.post(
+				`${apiURL}/code?language=${language}&level=${level}`,
+				{
+					code,
+					questionIndex: currentQuestionIndex,
+				}
+			);
 			setChatHistory((prevHistory) => [
 				...prevHistory,
 				{ message: response.data.aiAnswer || '', isCode: true },
@@ -123,6 +132,16 @@ const Chat = () => {
 		}
 		setLoading(false);
 		setCode('');
+	};
+
+	const navigate = useNavigate();
+
+	const handleRegister = () => {
+		navigate('/register');
+	};
+
+	const handleLogin = () => {
+		navigate('/login');
 	};
 
 	useEffect(() => {
@@ -178,6 +197,12 @@ const Chat = () => {
 				<button className='nextQuestionBtn' onClick={handleNextQuestion}>
 					Next question
 				</button>
+				<button className='registerBtn' onClick={handleRegister}>
+					Register
+				</button>
+				<button className='loginBtn' onClick={handleLogin}>
+					Login
+				</button>
 				<div className='chatContainer'>
 					<div className='questionsAnswersContainer'>
 						<h1>Questions and Answers</h1>
@@ -186,6 +211,7 @@ const Chat = () => {
 								<h3 className='question'>{currentQuestion.text}</h3>
 							)}
 						</div>
+						{registerAlert && <div className='alert'>{registerAlert}</div>}
 						<div className='userAnswer'>
 							<form onSubmit={handleSubmitAnswer}>
 								<textarea
