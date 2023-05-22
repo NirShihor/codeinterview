@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './chat.css';
 // import questionsData from '../data/questions.json';
@@ -6,6 +6,7 @@ import axios from 'axios';
 import { default as SyntaxHighlighter } from 'react-syntax-highlighter'; // for code styling
 import CodeEditor from '../components/CodeEditor';
 import draculaTheme from '../draculaTheme';
+import { LoginContext } from '../context/LoginContext';
 
 let apiURL;
 if (process.env.NODE_ENV !== 'production') {
@@ -29,7 +30,9 @@ const Chat = () => {
 	const [alert, setAlert] = useState(null);
 	const [registerAlert, setRegisterAlert] = useState(null);
 	const [isSubscribed, setIsSubscribed] = useState(false); // for the useEffect cleanup function
-	const [isLoggedIn, setLoggedIn] = useState(false); // for the useEffect cleanup function
+	const [loggedIn, setLoogedIn] = useState(false);
+
+	const { isLoggedIn } = useContext(LoginContext);
 
 	const handleLanguageChange = (e) => {
 		setLanguage(e.target.value);
@@ -54,6 +57,7 @@ const Chat = () => {
 	};
 
 	const handleNextQuestion = async () => {
+		console.log('LOGGED IN STATUS: ', isLoggedIn);
 		let newIndex;
 
 		if (questions.length === 0) {

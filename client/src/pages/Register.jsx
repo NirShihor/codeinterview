@@ -13,8 +13,10 @@ const Register = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [alert, setAlert] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSubmit = async (e) => {
+		setIsLoading(true);
 		e.preventDefault();
 		try {
 			await registrationSchema.validate({ email, password });
@@ -22,12 +24,15 @@ const Register = () => {
 				email,
 				password,
 			});
-			console.log('HERE');
-			console.log('PASSWORD: ', password);
+
 			setAlert(response.data.message);
 			setEmail('');
 			setPassword('');
+			if (response.data.token) {
+				localStorage.setItem('TOKEN: ', response.data.token);
+			}
 		} catch (err) {
+			setIsLoading(false);
 			if (err.name === 'ValidationError') {
 				const yupErrors = err.errors.map((e) => e);
 				setAlert(yupErrors.join('\n'));

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+// import { LoginContext } from '../context/LoginContext';
 
 let apiURL;
 if (process.env.NODE_ENV !== 'production') {
@@ -13,6 +14,7 @@ const Login = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [login, setLogin] = useState(false);
+	// const { isLoggedIn, setLogin } = useContext(LoginContext);
 
 	const navigate = useNavigate();
 
