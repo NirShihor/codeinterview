@@ -6,7 +6,8 @@ import axios from 'axios';
 import { default as SyntaxHighlighter } from 'react-syntax-highlighter'; // for code styling
 import CodeEditor from '../components/CodeEditor';
 import draculaTheme from '../draculaTheme';
-import { LoginContext } from '../context/LoginContext';
+import { AuthContext } from '../context/AuthContext';
+import useLogout from '../helpers/useLogout';
 
 let apiURL;
 if (process.env.NODE_ENV !== 'production') {
@@ -30,9 +31,9 @@ const Chat = () => {
 	const [alert, setAlert] = useState(null);
 	const [registerAlert, setRegisterAlert] = useState(null);
 	const [isSubscribed, setIsSubscribed] = useState(false); // for the useEffect cleanup function
-	const [loggedIn, setLoogedIn] = useState(false);
+	const [loggedIn, setLoggedIn] = useState(false);
 
-	const { isLoggedIn } = useContext(LoginContext);
+	const { isLoggedIn } = useContext(AuthContext);
 
 	const handleLanguageChange = (e) => {
 		setLanguage(e.target.value);
@@ -148,6 +149,13 @@ const Chat = () => {
 		navigate('/login');
 	};
 
+	const logout = useLogout();
+
+	const handleLogout = () => {
+		logout();
+		navigate('/');
+	};
+
 	useEffect(() => {
 		async function fetchQuestions() {
 			if (language === 'Select a language' || level === 'Select a level') {
@@ -204,8 +212,12 @@ const Chat = () => {
 				<button className='registerBtn' onClick={handleRegister}>
 					Register
 				</button>
+
 				<button className='loginBtn' onClick={handleLogin}>
 					Login
+				</button>
+				<button className='logoutBtn' onClick={handleLogout}>
+					Logout
 				</button>
 				<div className='chatContainer'>
 					<div className='questionsAnswersContainer'>
